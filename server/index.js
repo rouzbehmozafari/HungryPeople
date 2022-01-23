@@ -30,8 +30,36 @@ app.post('/sent',(req,res)=>{
             mailSender(newMessage)
         }
     })
+    res.redirect('/sent')
 })
-
+app.post('/bookSent',(req,res)=>{
+    const form = formidable()
+    form.parse(req,(err,fields,_)=>{
+        if(err){
+            console.log(err)
+            res.send({status:'error',err})
+        }
+        else{
+            const newMessage = {
+                to: fields.email,
+                subject : `Table is Booked ${fields.name} !`,
+                message : 
+                    `Hi ${fields.name}!
+                    Booking Infos:
+                    Name:${fields.name}
+                    Number of People:${fields.people}
+                    Date:${fields.date}
+                    Time:${fields.time}
+                    `
+            }
+            mailSender(newMessage)
+        }
+    })
+    res.redirect('/sent')
+})
+app.use((req,res)=>{
+    res.redirect('/404')
+})
 const PORT = 5000
 app.listen(PORT,()=>{
     console.log('listening on: ',PORT)
